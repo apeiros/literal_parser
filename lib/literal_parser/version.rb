@@ -7,5 +7,7 @@ rescue LoadError
 end
 
 class LiteralParser
-  Version = Gem::Version.new("0.0.1")
+
+  # The version of the LiteralParser library
+  Version = Gem::Version.new("1.0.0")
 end
