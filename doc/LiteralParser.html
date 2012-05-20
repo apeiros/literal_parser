@@ -1,0 +1,1395 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: LiteralParser
+  
+    &mdash; Documentation by YARD 0.8.1
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (L)</a> &raquo;
+    
+    
+    <span class="title">LiteralParser</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: LiteralParser
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">LiteralParser</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+      <dt class="r2">Includes:</dt>
+      <dd class="r2"><span class='object_link'><a href="LiteralParser/Expressions.html" title="LiteralParser::Expressions (module)">Expressions</a></span></dd>
+      
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/literal_parser.rb<span class="defines">,<br />
+  lib/literal_parser/version.rb</span>
+</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Limitations</p>
+
+<ul>
+  <li>LiteralParser does not support ruby 1.9’s <code>{key: value}</code> syntax.</li>
+  <li>LiteralParser does not currently support all of rubys escape sequences in strings
+and symbols, e.g. “\C-…” type sequences don’t work.</li>
+  <li>Trailing commas in Array and Hash are not supported.</li>
+</ul>
+</div>
+  </div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>BigDecimals</p>
+
+<p>You can instruct LiteralParser to parse “12.5” as a bigdecimal and use “12.5e” to have
+it parsed as float (short for “12.5e0”, equivalent to “1.25e1”)</p>
+</div>
+  </div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Date &amp; Time</p>
+
+<p>LiteralParser supports a subset of ISO-8601 for Date and Time which are not actual
+valid ruby literals. The form YYYY-MM-DD (e.g. 2012-05-20) is translated to a Date
+object, and YYYY-MM-DD”T”HH:MM:SS (e.g. 2012-05-20T18:29:52) is translated to a
+Time object.</p>
+</div>
+  </div>
+
+<p>LiteralParser</p>
+
+<p>Parse Strings containing ruby literals.</p>
+
+<p>LiteralParser recognizes constants and the following literals:</p>
+
+<pre class="code ruby"><code>nil                   # nil
+true                  # true
+false                 # false
+-123                  # Fixnum/Bignum (decimal)
+0b1011                # Fixnum/Bignum (binary)
+0755                  # Fixnum/Bignum (octal)
+0xff                  # Fixnum/Bignum (hexadecimal)
+120.30                # Float (optional: BigDecimal)
+1e0                   # Float
+&quot;foo&quot;                 # String, no interpolation, but \t etc. work
+'foo'                 # String, only \\ and \' are escaped
+/foo/                 # Regexp
+:foo                  # Symbol
+:&quot;foo&quot;                # Symbol
+2012-05-20            # Date
+2012-05-20T18:29:52   # DateTime
+[Any, Literals, Here] # Array
+{Any =&gt; Literals}     # Hash
+</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>nil</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; nil
+</span><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:foo</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; :foo
+</span><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>123</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; 123
+</span><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>1.5</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; 1.5
+</span><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>1.5</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>use_big_decimal:</span> <span class='kw'>true</span><span class='rparen'>)</span> <span class='comment'># =&gt; #&lt;BigDecimal:…,'0.15E1',18(18)&gt;
+</span><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[1, 2, 3]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; [1, 2, 3]
+</span><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{:a =&gt; 1, :b =&gt; 2}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; {:a =&gt; 1, :b =&gt; 2}</span></pre>
+    
+  </div>
+
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="LiteralParser/Expressions.html" title="LiteralParser::Expressions (module)">Expressions</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="LiteralParser/SyntaxError.html" title="LiteralParser::SyntaxError (class)">SyntaxError</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="Version-constant" class="">Version =
+          <div class="docstring">
+  <div class="discussion">
+    <p>The version of the LiteralParser library</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>1.0.0</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="LiteralParser/Expressions.html" title="LiteralParser::Expressions (module)">Expressions</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LiteralParser/Expressions.html#DStringEscapes-constant" title="LiteralParser::Expressions::DStringEscapes (constant)">Expressions::DStringEscapes</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RArrayBegin-constant" title="LiteralParser::Expressions::RArrayBegin (constant)">Expressions::RArrayBegin</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RArrayEnd-constant" title="LiteralParser::Expressions::RArrayEnd (constant)">Expressions::RArrayEnd</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RArraySeparator-constant" title="LiteralParser::Expressions::RArraySeparator (constant)">Expressions::RArraySeparator</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RArrayVoid-constant" title="LiteralParser::Expressions::RArrayVoid (constant)">Expressions::RArrayVoid</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RBigDecimal-constant" title="LiteralParser::Expressions::RBigDecimal (constant)">Expressions::RBigDecimal</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RBinaryInteger-constant" title="LiteralParser::Expressions::RBinaryInteger (constant)">Expressions::RBinaryInteger</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RConstant-constant" title="LiteralParser::Expressions::RConstant (constant)">Expressions::RConstant</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RDString-constant" title="LiteralParser::Expressions::RDString (constant)">Expressions::RDString</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RDate-constant" title="LiteralParser::Expressions::RDate (constant)">Expressions::RDate</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RDateTime-constant" title="LiteralParser::Expressions::RDateTime (constant)">Expressions::RDateTime</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RFalse-constant" title="LiteralParser::Expressions::RFalse (constant)">Expressions::RFalse</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RFloat-constant" title="LiteralParser::Expressions::RFloat (constant)">Expressions::RFloat</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RHashArrow-constant" title="LiteralParser::Expressions::RHashArrow (constant)">Expressions::RHashArrow</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RHashBegin-constant" title="LiteralParser::Expressions::RHashBegin (constant)">Expressions::RHashBegin</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RHashEnd-constant" title="LiteralParser::Expressions::RHashEnd (constant)">Expressions::RHashEnd</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RHashSeparator-constant" title="LiteralParser::Expressions::RHashSeparator (constant)">Expressions::RHashSeparator</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RHashVoid-constant" title="LiteralParser::Expressions::RHashVoid (constant)">Expressions::RHashVoid</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RHexInteger-constant" title="LiteralParser::Expressions::RHexInteger (constant)">Expressions::RHexInteger</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RInteger-constant" title="LiteralParser::Expressions::RInteger (constant)">Expressions::RInteger</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RNil-constant" title="LiteralParser::Expressions::RNil (constant)">Expressions::RNil</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#ROctalInteger-constant" title="LiteralParser::Expressions::ROctalInteger (constant)">Expressions::ROctalInteger</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RRegexp-constant" title="LiteralParser::Expressions::RRegexp (constant)">Expressions::RRegexp</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RSString-constant" title="LiteralParser::Expressions::RSString (constant)">Expressions::RSString</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RSymbol-constant" title="LiteralParser::Expressions::RSymbol (constant)">Expressions::RSymbol</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RTime-constant" title="LiteralParser::Expressions::RTime (constant)">Expressions::RTime</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RTimeZone-constant" title="LiteralParser::Expressions::RTimeZone (constant)">Expressions::RTimeZone</a></span>, <span class='object_link'><a href="LiteralParser/Expressions.html#RTrue-constant" title="LiteralParser::Expressions::RTrue (constant)">Expressions::RTrue</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#constant_base-instance_method" title="#constant_base (instance method)">- (Module<sup>?</sup>) <strong>constant_base</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Where to lookup constants.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#use_big_decimal-instance_method" title="#use_big_decimal (instance method)">- (Boolean) <strong>use_big_decimal</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>True if &ldquo;1.25&rdquo; should be parsed into a big-decimal, false if it should be parsed as
+Float.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse-class_method" title="parse (class method)">+ (Object) <strong>parse</strong>(string, options = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Parse a String, returning the object which it contains.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#end_of_string%3F-instance_method" title="#end_of_string? (instance method)">- (Boolean) <strong>end_of_string?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether the scanner reached the end of the string.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (LiteralParser) <strong>initialize</strong>(string, options = nil) </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Parse a String, returning the object which it contains.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#position-instance_method" title="#position (instance method)">- (Integer) <strong>position</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The position of the scanner in the string.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#position%3D-instance_method" title="#position= (instance method)">- (Object) <strong>position=</strong>(value) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Moves the scanners position to the given character-index.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rest-instance_method" title="#rest (instance method)">- (String) <strong>rest</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The currently unprocessed rest of the string.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#scan_value-instance_method" title="#scan_value (instance method)">- (Object) <strong>scan_value</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Scans the string for a single value and advances the parsers position.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="LiteralParser (class)">LiteralParser</a></span></tt>) <strong>initialize</strong>(string, options = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Parse a String, returning the object which it contains.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>string</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The string which should be parsed</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>nil</tt>, <tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>An options-hash</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>options</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:use_big_decimal</span>
+          <span class="type">(<tt>Boolean</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Whether to use BigDecimal instead of Float for objects like “1.23”.
+Defaults to false.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:constant_base</span>
+          <span class="type">(<tt>Boolean</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Determines from what constant other constants are searched.
+Defaults to Object (nil is treated as Object too, Object is the toplevel-namespace).</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+200
+201
+202
+203
+204
+205
+206</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 200</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>?</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span> <span class='op'>:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@constant_base</span>    <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:constant_base</span><span class='rbracket'>]</span> <span class='comment'># nil means toplevel
+</span>  <span class='ivar'>@use_big_decimal</span>  <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:use_big_decimal</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
+  <span class='ivar'>@string</span>           <span class='op'>=</span> <span class='id identifier rubyid_string'>string</span>
+  <span class='ivar'>@scanner</span>          <span class='op'>=</span> <span class='const'>StringScanner</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <span id="constant_base-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="constant_base-instance_method">
+  
+    - (<tt>Module</tt><sup>?</sup>) <strong>constant_base</strong>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Where to lookup constants. Nil is toplevel (equivalent to Object).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Module</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Where to lookup constants. Nil is toplevel (equivalent to Object).</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+179
+180
+181</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 179</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_constant_base'>constant_base</span>
+  <span class='ivar'>@constant_base</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <span id="use_big_decimal-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="use_big_decimal-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>use_big_decimal</strong>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>True if “1.25” should be parsed into a big-decimal, false if it should be parsed as
+Float.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>True if “1.25” should be parsed into a big-decimal, false if it should be parsed as
+Float.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+184
+185
+186</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 184</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_use_big_decimal'>use_big_decimal</span>
+  <span class='ivar'>@use_big_decimal</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="parse-class_method">
+  
+    + (<tt>Object</tt>) <strong>parse</strong>(string, options = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Parse a String, returning the object which it contains.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><span class='const'>LiteralParser</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:foo</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># =&gt; :foo</span></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>string</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The string which should be parsed</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>nil</tt>, <tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>An options-hash</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>options</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:use_big_decimal</span>
+          <span class="type">(<tt>Boolean</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Whether to use BigDecimal instead of Float for objects like “1.23”.
+Defaults to false.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:constant_base</span>
+          <span class="type">(<tt>Boolean</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Determines from what constant other constants are searched.
+Defaults to Object (nil is treated as Object too, Object is the toplevel-namespace).</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The object in the string.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="LiteralParser/SyntaxError.html" title="LiteralParser::SyntaxError (class)">LiteralParser::SyntaxError</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>If the String does not contain exactly one valid literal, a SyntaxError is raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+169
+170
+171
+172
+173
+174
+175</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 169</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_parser'>parser</span>  <span class='op'>=</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_value'>value</span>   <span class='op'>=</span> <span class='id identifier rubyid_parser'>parser</span><span class='period'>.</span><span class='id identifier rubyid_scan_value'>scan_value</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SyntaxError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unexpected superfluous data: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_parser'>parser</span><span class='period'>.</span><span class='id identifier rubyid_rest'>rest</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_parser'>parser</span><span class='period'>.</span><span class='id identifier rubyid_end_of_string?'>end_of_string?</span>
+
+  <span class='id identifier rubyid_value'>value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="end_of_string?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>end_of_string?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Whether the scanner reached the end of the string.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether the scanner reached the end of the string.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+222
+223
+224</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 222</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_end_of_string?'>end_of_string?</span>
+  <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_eos?'>eos?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="position-instance_method">
+  
+    - (<tt>Integer</tt>) <strong>position</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The position of the scanner in the string</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The position of the scanner in the string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+209
+210
+211</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 209</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_position'>position</span>
+  <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_pos'>pos</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="position=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>position=</strong>(value) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Moves the scanners position to the given character-index.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The new position of the scanner</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+217
+218
+219</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 217</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_position='>position=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_pos'>pos</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="rest-instance_method">
+  
+    - (<tt>String</tt>) <strong>rest</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The currently unprocessed rest of the string.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The currently unprocessed rest of the string.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+227
+228
+229</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 227</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rest'>rest</span>
+  <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_rest'>rest</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="scan_value-instance_method">
+  
+    - (<tt>Object</tt>) <strong>scan_value</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Scans the string for a single value and advances the parsers position</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the scanned value</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="LiteralParser/SyntaxError.html" title="LiteralParser::SyntaxError (class)">LiteralParser::SyntaxError</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>When no valid ruby object could be scanned at the given position, a
+LiteralParser::SyntaxError is raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/literal_parser.rb', line 238</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+  <span class='kw'>case</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RArrayBegin</span><span class='rparen'>)</span>    <span class='kw'>then</span>
+      <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+      <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RArrayVoid</span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RArrayEnd</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_value'>value</span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_value'>value</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+        <span class='kw'>while</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RArraySeparator</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_value'>value</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+        <span class='kw'>end</span>
+        <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SyntaxError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Expected ]</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RArrayVoid</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RArrayEnd</span><span class='rparen'>)</span>
+
+        <span class='id identifier rubyid_value'>value</span>
+      <span class='kw'>end</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashBegin</span><span class='rparen'>)</span>    <span class='kw'>then</span>
+      <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+      <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashVoid</span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashEnd</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_value'>value</span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+        <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SyntaxError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Expected =&gt;</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashArrow</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+        <span class='id identifier rubyid_value'>value</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_val'>val</span>
+        <span class='kw'>while</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashSeparator</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+          <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SyntaxError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Expected =&gt;</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashArrow</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='id identifier rubyid_scan_value'>scan_value</span>
+          <span class='id identifier rubyid_value'>value</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_val'>val</span>
+        <span class='kw'>end</span>
+        <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SyntaxError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Expected }</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashVoid</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHashEnd</span><span class='rparen'>)</span>
+
+        <span class='id identifier rubyid_value'>value</span>
+      <span class='kw'>end</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RConstant</span><span class='rparen'>)</span>      <span class='kw'>then</span> <span class='id identifier rubyid_eval'>eval</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@constant_base</span><span class='rbrace'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='comment'># yes, I know it's evil, but it's sane due to the regex, also it's less annoying than deep_const_get
+</span>    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RNil</span><span class='rparen'>)</span>           <span class='kw'>then</span> <span class='kw'>nil</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RTrue</span><span class='rparen'>)</span>          <span class='kw'>then</span> <span class='kw'>true</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RFalse</span><span class='rparen'>)</span>         <span class='kw'>then</span> <span class='kw'>false</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RDateTime</span><span class='rparen'>)</span>      <span class='kw'>then</span>
+      <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_mktime'>mktime</span><span class='lparen'>(</span><span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>3</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>4</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>5</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>6</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RDate</span><span class='rparen'>)</span>          <span class='kw'>then</span>
+      <span class='id identifier rubyid_date'>date</span> <span class='op'>=</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>3</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+      <span class='const'>Date</span><span class='period'>.</span><span class='id identifier rubyid_civil'>civil</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_date'>date</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RTime</span><span class='rparen'>)</span>          <span class='kw'>then</span>
+      <span class='id identifier rubyid_now'>now</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
+      <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_mktime'>mktime</span><span class='lparen'>(</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_year'>year</span><span class='comma'>,</span> <span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_month'>month</span><span class='comma'>,</span> <span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_day'>day</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>3</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RFloat</span><span class='rparen'>)</span>         <span class='kw'>then</span> <span class='const'>Float</span><span class='lparen'>(</span><span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^0-9.e-</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RBigDecimal</span><span class='rparen'>)</span>    <span class='kw'>then</span>
+      <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^0-9.-</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+      <span class='ivar'>@use_big_decimal</span> <span class='op'>?</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='const'>Float</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>ROctalInteger</span><span class='rparen'>)</span>  <span class='kw'>then</span> <span class='const'>Integer</span><span class='lparen'>(</span><span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^0-9-</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RHexInteger</span><span class='rparen'>)</span>    <span class='kw'>then</span> <span class='const'>Integer</span><span class='lparen'>(</span><span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^xX0-9A-Fa-f-</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RBinaryInteger</span><span class='rparen'>)</span> <span class='kw'>then</span> <span class='const'>Integer</span><span class='lparen'>(</span><span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^bB01-</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RInteger</span><span class='rparen'>)</span>       <span class='kw'>then</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^0-9-</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RRegexp</span><span class='rparen'>)</span>        <span class='kw'>then</span>
+      <span class='id identifier rubyid_source'>source</span> <span class='op'>=</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_flags'>flags</span>  <span class='op'>=</span> <span class='int'>0</span>
+      <span class='id identifier rubyid_lang'>lang</span>   <span class='op'>=</span> <span class='kw'>nil</span>
+      <span class='kw'>if</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span> <span class='kw'>then</span>
+        <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='const'>Regexp</span><span class='op'>::</span><span class='const'>IGNORECASE</span> <span class='kw'>if</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>i</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='const'>Regexp</span><span class='op'>::</span><span class='const'>EXTENDED</span> <span class='kw'>if</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>m</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='const'>Regexp</span><span class='op'>::</span><span class='const'>MULTILINE</span> <span class='kw'>if</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>x</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_lang'>lang</span>   <span class='op'>=</span> <span class='ivar'>@scanner</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>^nNeEsSuU</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='op'>-</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>1</span><span class='rbracket'>]</span>
+      <span class='kw'>end</span>
+      <span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_source'>source</span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span><span class='comma'>,</span> <span class='id identifier rubyid_lang'>lang</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RSymbol</span><span class='rparen'>)</span>        <span class='kw'>then</span>
+      <span class='kw'>case</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='lbracket'>[</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>1</span><span class='rbracket'>]</span>
+        <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>&quot;</span><span class='tstring_end'>'</span></span>
+          <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='lbracket'>[</span><span class='int'>2</span><span class='op'>..</span><span class='op'>-</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\(?:[0-3]?\d\d?|x[A-Fa-f\d]{2}|.)</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span>
+            <span class='const'>DStringEscapes</span><span class='lbracket'>[</span><span class='id identifier rubyid_m'>m</span><span class='rbracket'>]</span>
+          <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+        <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>'</span><span class='tstring_end'>&quot;</span></span>
+          <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='lbracket'>[</span><span class='int'>2</span><span class='op'>..</span><span class='op'>-</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\'</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>'</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\\\</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\\</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+        <span class='kw'>else</span>
+          <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+      <span class='kw'>end</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RSString</span><span class='rparen'>)</span>       <span class='kw'>then</span>
+      <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\'</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>'</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\\\</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\\</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='const'>RDString</span><span class='rparen'>)</span>       <span class='kw'>then</span>
+      <span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_matched'>matched</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\(?:[0-3]?\d\d?|x[A-Fa-f\d]{2}|.)</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='const'>DStringEscapes</span><span class='lbracket'>[</span><span class='id identifier rubyid_m'>m</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+    <span class='kw'>else</span> <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SyntaxError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unrecognized pattern: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@scanner</span><span class='period'>.</span><span class='id identifier rubyid_rest'>rest</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Sun May 20 23:31:55 2012 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.1 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>

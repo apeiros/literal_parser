@@ -1,0 +1,554 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: LiteralParser::Expressions
+  
+    &mdash; Documentation by YARD 0.8.1
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (E)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../LiteralParser.html" title="LiteralParser (class)">LiteralParser</a></span></span>
+     &raquo; 
+    <span class="title">Expressions</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: LiteralParser::Expressions
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+    <dt class="r1">Included in:</dt>
+    <dd class="r1"><span class='object_link'><a href="../LiteralParser.html" title="LiteralParser (class)">LiteralParser</a></span></dd>
+    
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">lib/literal_parser.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>All the expressions used to parse the literals</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="RArrayBegin-constant" class="">RArrayBegin =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match begin of an array</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\[</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RArrayVoid-constant" class="">RArrayVoid =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match whitespace between elements in an array</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RArraySeparator-constant" class="">RArraySeparator =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match the separator of array elements</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RArrayVoid</span><span class='rbrace'>}</span><span class='tstring_content'>,</span><span class='embexpr_beg'>#{</span><span class='const'>RArrayVoid</span><span class='rbrace'>}</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RArrayEnd-constant" class="">RArrayEnd =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match end of an array</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\]</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RHashBegin-constant" class="">RHashBegin =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match begin of a hash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\{</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RHashVoid-constant" class="">RHashVoid =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match whitespace between elements in a hash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RHashSeparator-constant" class="">RHashSeparator =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match the separator of hash key/value pairs</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RHashVoid</span><span class='rbrace'>}</span><span class='tstring_content'>,</span><span class='embexpr_beg'>#{</span><span class='const'>RHashVoid</span><span class='rbrace'>}</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RHashArrow-constant" class="">RHashArrow =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match the separator between a key and a value in a hash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RHashVoid</span><span class='rbrace'>}</span><span class='tstring_content'>=&gt;</span><span class='embexpr_beg'>#{</span><span class='const'>RHashVoid</span><span class='rbrace'>}</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RHashEnd-constant" class="">RHashEnd =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match end of a hash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\}</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RConstant-constant" class="">RConstant =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match constant names (with nesting)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[A-Z]\w*(?:::[A-Z]\w*)*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RNil-constant" class="">RNil =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match nil</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>nil</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RFalse-constant" class="">RFalse =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match false</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>false</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RTrue-constant" class="">RTrue =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match true</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>true</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RInteger-constant" class="">RInteger =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match an Integer in decimal notation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[+-]?\d[\d_]*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RBinaryInteger-constant" class="">RBinaryInteger =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match an Integer in binary notation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[+-]?0b[01][01_]*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RHexInteger-constant" class="">RHexInteger =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match an Integer in hexadecimal notation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[+-]?0x[A-Fa-f\d][A-Fa-f\d_]*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="ROctalInteger-constant" class="">ROctalInteger =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match an Integer in octal notation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[+-]?0[0-7][0-7'_,]*</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RBigDecimal-constant" class="">RBigDecimal =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a decimal number (Float or BigDecimal)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RInteger</span><span class='rbrace'>}</span><span class='tstring_content'>\.\d+</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RFloat-constant" class="">RFloat =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a decimal number in scientific notation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RBigDecimal</span><span class='rbrace'>}</span><span class='tstring_content'>(?:f|e</span><span class='embexpr_beg'>#{</span><span class='const'>RInteger</span><span class='rbrace'>}</span><span class='tstring_content'>)</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RSString-constant" class="">RSString =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a single quoted string</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>'(?:[^\\']+|\\.)*'</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RDString-constant" class="">RDString =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a double quoted string</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>&quot;(?:[^\\&quot;]+|\\.)*&quot;</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RRegexp-constant" class="">RRegexp =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a regular expression</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>/((?:[^\\/]+|\\.)*)/([imxnNeEsSuU]*)</span><span class='regexp_end'>}</span></span></pre></dd>
+      
+        <dt id="RSymbol-constant" class="">RSymbol =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a symbol</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>:\w+|:</span><span class='embexpr_beg'>#{</span><span class='const'>RSString</span><span class='rbrace'>}</span><span class='tstring_content'>|:</span><span class='embexpr_beg'>#{</span><span class='const'>RDString</span><span class='rbrace'>}</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RDate-constant" class="">RDate =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a date</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(\d{4})-(\d{2})-(\d{2})</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RTimeZone-constant" class="">RTimeZone =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a timezone</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(Z|[A-Z]{3,4}|[+-]\d{4})</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RTime-constant" class="">RTime =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a time (without date)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(\d{2}):(\d{2}):(\d{2})(?:RTimeZone)?</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="RDateTime-constant" class="">RDateTime =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Match a datetime</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RDate</span><span class='rbrace'>}</span><span class='tstring_content'>T</span><span class='embexpr_beg'>#{</span><span class='const'>RTime</span><span class='rbrace'>}</span><span class='regexp_end'>/</span></span></pre></dd>
+      
+        <dt id="DStringEscapes-constant" class="">DStringEscapes =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Map escape sequences in double quoted strings</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>\\\\</span><span class='tstring_end'>'</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\\</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\\'</span><span class='tstring_end'>&quot;</span></span>  <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>'</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>\\&quot;</span><span class='tstring_end'>'</span></span>  <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>&quot;</span><span class='tstring_end'>'</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>\t</span><span class='tstring_end'>'</span></span>   <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\t</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>\f</span><span class='tstring_end'>'</span></span>   <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\f</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>\r</span><span class='tstring_end'>'</span></span>   <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\r</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>\n</span><span class='tstring_end'>'</span></span>   <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+<span class='rbrace'>}</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+    <div id="footer">
+  Generated on Sun May 20 23:31:55 2012 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.1 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>
