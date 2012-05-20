@@ -19,116 +19,222 @@ require 'date'
 #   LiteralParser.parse("123") # => 123
 #   LiteralParser.parse("1.5") # => 1.5
 #   LiteralParser.parse("1.5", use_big_decimal: true) # => #<BigDecimal:…,'0.15E1',18(18)>
+#   LiteralParser.parse("[1, 2, 3]") # => [1, 2, 3]
+#   LiteralParser.parse("{:a => 1, :b => 2}") # => {:a => 1, :b => 2}
 #
-# @note Hashes and 1.9 Syntax
-#   LiteralParser does not support ruby 1.9's {key: value} syntax.
+# LiteralParser recognizes constants and the following literals:
+#
+#     nil                   # nil
+#     true                  # true
+#     false                 # false
+#     -123                  # Fixnum/Bignum (decimal)
+#     0b1011                # Fixnum/Bignum (binary)
+#     0755                  # Fixnum/Bignum (octal)
+#     0xff                  # Fixnum/Bignum (hexadecimal)
+#     120.30                # Float (optional: BigDecimal)
+#     1e0                   # Float
+#     "foo"                 # String, no interpolation, but \t etc. work
+#     'foo'                 # String, only \\ and \' are escaped
+#     /foo/                 # Regexp
+#     :foo                  # Symbol
+#     :"foo"                # Symbol
+#     2012-05-20            # Date
+#     2012-05-20T18:29:52   # DateTime
+#     [Any, Literals, Here] # Array
+#     {Any => Literals}     # Hash
+#
+#
+# @note Limitations
+#
+#   * LiteralParser does not support ruby 1.9's `{key: value}` syntax.
+#   * LiteralParser does not currently support all of rubys escape sequences in strings
+#     and symbols, e.g. "\C-…" type sequences don't work.
+#   * Trailing commas in Array and Hash are not supported.
 #
 # @note BigDecimals
+#
 #   You can instruct LiteralParser to parse "12.5" as a bigdecimal and use "12.5e" to have
 #   it parsed as float (short for "12.5e0", equivalent to "1.25e1")
 #
-# @note Strings & Symbols
-#   LiteralParser does not currently support all of rubys escape sequences in strings,
-#   e.g. "\C-…" type sequences don't work.
-#
 # @note Date & Time
+#
 #   LiteralParser supports a subset of ISO-8601 for Date and Time which are not actual
 #   valid ruby literals. The form YYYY-MM-DD (e.g. 2012-05-20) is translated to a Date
-#   object, and YYYY-MM-DD"T" (e.g. 2012-05-20T18:29:52) is translated to a Time object.
+#   object, and YYYY-MM-DD"T"HH:MM:SS (e.g. 2012-05-20T18:29:52) is translated to a
+#   Time object.
 #
-# LiteralParser recognizes constants and the following literals:
-#   nil                   # nil
-#   true                  # true
-#   false                 # false
-#   -123                  # Fixnum/Bignum (decimal)
-#   0b1011                # Fixnum/Bignum (binary)
-#   0755                  # Fixnum/Bignum (octal)
-#   0xff                  # Fixnum/Bignum (hexadecimal)
-#   120.30                # Float (optional: BigDecimal)
-#   1e0                   # Float
-#   "foo"                 # String, no interpolation, but \t etc. work
-#   'foo'                 # String, only \\ and \' are escaped
-#   /foo/                 # Regexp
-#   :foo                  # Symbol
-#   :"foo"                # Symbol
-#   2012-05-20            # Date
-#   2012-05-20T18:29:52   # DateTime
-#   [Any, Literals, Here] # Array
-#   {Any => Literals}     # Hash
-#
-# TODO
-# * ruby with 32bit and version < 1.9.2 raises RangeError for too big/small Time
-#   instances, should we degrade to DateTime for those?
-# * Implement %-literals (String: %, %Q, %q, Symbol: %s; Regexp: %r; Array: %W, %w)
-# * Complete escape sequences in strings.
 class LiteralParser
-  RArrayBegin     = /\[/
-  RArrayVoid      = /\s*/
-  RArraySeparator = /#{RArrayVoid},#{RArrayVoid}/
-  RArrayEnd       = /\]/
-  RHashBegin      = /\{/
-  RHashVoid       = /\s*/
-  RHashSeparator  = /#{RHashVoid},#{RHashVoid}/
-  RHashArrow      = /#{RHashVoid}=>#{RHashVoid}/
-  RHashEnd        = /\}/
-  RConstant       = /[A-Z]\w*(?:::[A-Z]\w*)*/
-  RNil            = /nil/
-  RFalse          = /false/
-  RTrue           = /true/
-  RInteger        = /[+-]?\d[\d_]*/
-  RBinaryInteger  = /[+-]?0b[01][01_]*/
-  RHexInteger     = /[+-]?0x[A-Fa-f\d][A-Fa-f\d_]*/
-  ROctalInteger   = /[+-]?0[0-7][0-7'_,]*/
-  RBigDecimal     = /#{RInteger}\.\d+/
-  RFloat          = /#{RBigDecimal}(?:f|e#{RInteger})/
-  RSString        = /'(?:[^\\']+|\\.)*'/
-  RDString        = /"(?:[^\\"]+|\\.)*"/
-  RRegexp         = %r{/((?:[^\\/]+|\\.)*)/([imxnNeEsSuU]*)}
-  RSymbol         = /:\w+|:#{RSString}|:#{RDString}/
-  RDate           = /(\d{4})-(\d{2})-(\d{2})/
-  RTimeZone       = /(Z|[A-Z]{3,4}|[+-]\d{4})/
-  RTime           = /(\d{2}):(\d{2}):(\d{2})(?:RTimeZone)?/
-  RDateTime       = /#{RDate}T#{RTime}/
-  RSeparator      = /[^A-Z\#nft\d:'"\/+-]+|$/
-  RTerminator     = /\s*(?:\#.*)?(?:\n|\r\n?|\Z)/
 
-  RIdentifier     = /[A-Za-z_]\w*/
+  # Raised when a String could not be parsed
+  class SyntaxError < StandardError; end
 
-  DStringEscapes  = {
-    '\\\\' => "\\",
-    "\\'"  => "'",
-    '\\"'  => '"',
-    '\t'   => "\t",
-    '\f'   => "\f",
-    '\r'   => "\r",
-    '\n'   => "\n",
-  }
-  256.times do |i|
-    DStringEscapes["\\%o" % i]    = i.chr
-    DStringEscapes["\\%03o" % i]  = i.chr
-    DStringEscapes["\\x%02x" % i] = i.chr
-    DStringEscapes["\\x%02X" % i] = i.chr
+  # @private
+  # All the expressions used to parse the literals
+  module Expressions
+
+    RArrayBegin     = /\[/                                     # Match begin of an array
+
+    RArrayVoid      = /\s*/                                    # Match whitespace between elements in an array
+
+    RArraySeparator = /#{RArrayVoid},#{RArrayVoid}/            # Match the separator of array elements
+
+    RArrayEnd       = /\]/                                     # Match end of an array
+
+    RHashBegin      = /\{/                                     # Match begin of a hash
+
+    RHashVoid       = /\s*/                                    # Match whitespace between elements in a hash
+
+    RHashSeparator  = /#{RHashVoid},#{RHashVoid}/              # Match the separator of hash key/value pairs
+
+    RHashArrow      = /#{RHashVoid}=>#{RHashVoid}/             # Match the separator between a key and a value in a hash
+
+    RHashEnd        = /\}/                                     # Match end of a hash
+
+    RConstant       = /[A-Z]\w*(?:::[A-Z]\w*)*/                # Match constant names (with nesting)
+
+    RNil            = /nil/                                    # Match nil
+
+    RFalse          = /false/                                  # Match false
+
+    RTrue           = /true/                                   # Match true
+
+    RInteger        = /[+-]?\d[\d_]*/                          # Match an Integer in decimal notation
+
+    RBinaryInteger  = /[+-]?0b[01][01_]*/                      # Match an Integer in binary notation
+
+    RHexInteger     = /[+-]?0x[A-Fa-f\d][A-Fa-f\d_]*/          # Match an Integer in hexadecimal notation
+
+    ROctalInteger   = /[+-]?0[0-7][0-7'_,]*/                   # Match an Integer in octal notation
+
+    RBigDecimal     = /#{RInteger}\.\d+/                       # Match a decimal number (Float or BigDecimal)
+
+    RFloat          = /#{RBigDecimal}(?:f|e#{RInteger})/       # Match a decimal number in scientific notation
+
+    RSString        = /'(?:[^\\']+|\\.)*'/                     # Match a single quoted string
+
+    RDString        = /"(?:[^\\"]+|\\.)*"/                     # Match a double quoted string
+
+    RRegexp         = %r{/((?:[^\\/]+|\\.)*)/([imxnNeEsSuU]*)} # Match a regular expression
+
+    RSymbol         = /:\w+|:#{RSString}|:#{RDString}/         # Match a symbol
+
+    RDate           = /(\d{4})-(\d{2})-(\d{2})/                # Match a date
+
+    RTimeZone       = /(Z|[A-Z]{3,4}|[+-]\d{4})/               # Match a timezone
+
+    RTime           = /(\d{2}):(\d{2}):(\d{2})(?:RTimeZone)?/  # Match a time (without date)
+
+    RDateTime       = /#{RDate}T#{RTime}/                      # Match a datetime
+
+    # Map escape sequences in double quoted strings
+    DStringEscapes  = {
+      '\\\\' => "\\",
+      "\\'"  => "'",
+      '\\"'  => '"',
+      '\t'   => "\t",
+      '\f'   => "\f",
+      '\r'   => "\r",
+      '\n'   => "\n",
+    }
+    256.times do |i|
+      DStringEscapes["\\%o" % i]    = i.chr
+      DStringEscapes["\\%03o" % i]  = i.chr
+      DStringEscapes["\\x%02x" % i] = i.chr
+      DStringEscapes["\\x%02X" % i] = i.chr
+    end
+  end
+  include Expressions
+
+  # Parse a String, returning the object which it contains.
+  #
+  # @example
+  #     LiteralParser.parse(":foo") # => :foo
+  #
+  # @param [String] string
+  #   The string which should be parsed
+  # @param [nil, Hash] options
+  #   An options-hash
+  #
+  # @option options [Boolean] :use_big_decimal
+  #   Whether to use BigDecimal instead of Float for objects like "1.23".
+  #   Defaults to false.
+  # @option options [Boolean] :constant_base
+  #   Determines from what constant other constants are searched.
+  #   Defaults to Object (nil is treated as Object too, Object is the toplevel-namespace).
+  #
+  # @return [Object] The object in the string.
+  #
+  # @raise [LiteralParser::SyntaxError]
+  #   If the String does not contain exactly one valid literal, a SyntaxError is raised.
+  def self.parse(string, options=nil)
+    parser  = new(string, options)
+    value   = parser.scan_value
+    raise SyntaxError, "Unexpected superfluous data: #{parser.rest.inspect}" unless parser.end_of_string?
+
+    value
   end
 
-  def self.parse(string, opt=nil)
-    new(string, opt).value
-  end
-
-  attr_reader :value
+  # @return [Module, nil]
+  #   Where to lookup constants. Nil is toplevel (equivalent to Object).
   attr_reader :constant_base
+
+  # @return [Boolean]
+  #   True if "1.25" should be parsed into a big-decimal, false if it should be parsed as
+  #   Float.
   attr_reader :use_big_decimal
 
-  def initialize(string, opt=nil)
-    opt = opt ? opt.dup : {}
-    @constant_base    = opt[:constant_base] # nil means toplevel
-    @use_big_decimal  = opt.delete(:use_big_decimal) { false }
+  #
+  # Parse a String, returning the object which it contains.
+  #
+  # @param [String] string
+  #   The string which should be parsed
+  # @param [nil, Hash] options
+  #   An options-hash
+  #
+  # @option options [Boolean] :use_big_decimal
+  #   Whether to use BigDecimal instead of Float for objects like "1.23".
+  #   Defaults to false.
+  # @option options [Boolean] :constant_base
+  #   Determines from what constant other constants are searched.
+  #   Defaults to Object (nil is treated as Object too, Object is the toplevel-namespace).
+  def initialize(string, options=nil)
+    options = options ? options.dup : {}
+    @constant_base    = options[:constant_base] # nil means toplevel
+    @use_big_decimal  = options.delete(:use_big_decimal) { false }
     @string           = string
     @scanner          = StringScanner.new(string)
-    @value            = scan_value
-    raise SyntaxError, "Unexpected superfluous data: #{@scanner.rest.inspect}" unless @scanner.eos?
   end
 
-private
+  # @return [Integer] The position of the scanner in the string
+  def position
+    @scanner.pos
+  end
+
+  # Moves the scanners position to the given character-index.
+  #
+  # @param [Integer] value
+  #   The new position of the scanner
+  def position=(value)
+    @scanner.pos = value
+  end
+
+  # @return [Boolean] Whether the scanner reached the end of the string.
+  def end_of_string?
+    @scanner.eos?
+  end
+
+  # @return [String] The currently unprocessed rest of the string.
+  def rest
+    @scanner.rest
+  end
+
+  # Scans the string for a single value and advances the parsers position
+  #
+  # @return [Object] the scanned value
+  #
+  # @raise [LiteralParser::SyntaxError]
+  #   When no valid ruby object could be scanned at the given position, a
+  #   LiteralParser::SyntaxError is raised.
   def scan_value
     case
       when @scanner.scan(RArrayBegin)    then
