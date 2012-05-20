@@ -64,4 +64,26 @@ suite "LiteralParser" do
   test "Parse Constants" do
     assert_equal Time, LiteralParser.parse('Time')
   end
+  test "Perform manual parsing" do
+    parser = LiteralParser.new("'hello'\n12\ntrue")
+    assert_equal 0, parser.position
+    assert_equal 'hello', parser.scan_value
+    assert_equal "\n12\ntrue", parser.rest
+    assert_equal 7, parser.position
+    assert_equal false, parser.end_of_string?
+
+    parser.position += 1
+    assert_equal 8, parser.position
+    assert_equal 12, parser.scan_value
+    assert_equal "\ntrue", parser.rest
+    assert_equal 10, parser.position
+    assert_equal false, parser.end_of_string?
+
+    parser.position += 1
+    assert_equal 11, parser.position
+    assert_equal true, parser.scan_value
+    assert_equal "", parser.rest
+    assert_equal 15, parser.position
+    assert_equal true, parser.end_of_string?
+  end
 end
