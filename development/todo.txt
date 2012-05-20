@@ -1,0 +1,7 @@
+TODO
+
+* ruby with 32bit and version < 1.9.2 raises RangeError for too big/small Time
+  instances, should we degrade to DateTime for those?
+* Implement %-literals (String: %, %Q, %q, Symbol: %s; Regexp: %r; Array: %W, %w)
+* Complete escape sequences in strings.
+* Allow limiting what literals can be part of the string.
