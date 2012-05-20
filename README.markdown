@@ -24,9 +24,15 @@ Installation
 Usage
 -----
 
-A simple case:
+A couple of examples:
 
-    LiteralParser.parse("nil")
+    LiteralParser.parse("nil") # => nil
+    LiteralParser.parse(":foo") # => :foo
+    LiteralParser.parse("123") # => 123
+    LiteralParser.parse("1.5") # => 1.5
+    LiteralParser.parse("1.5", use_big_decimal: true) # => #<BigDecimal:…,'0.15E1',18(18)>
+    LiteralParser.parse("[1, 2, 3]") # => [1, 2, 3]
+    LiteralParser.parse("{:a => 1, :b => 2}") # => {:a => 1, :b => 2}
 
 
 
