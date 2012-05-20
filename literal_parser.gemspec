@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version                   = "1.0.0"
   s.authors                   = "Stefan Rusterholz"
   s.email                     = "stefan.rusterholz@gmail.com"
-  s.homepage                  = "https://github.com/apeiros/literal_parser'
+  s.homepage                  = "https://github.com/apeiros/literal_parser"
 
   s.description               = <<-DESCRIPTION.gsub(/^    /, '').chomp
     Parse Strings containing ruby literals and return a proper ruby object.
