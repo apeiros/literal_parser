@@ -116,7 +116,9 @@ class LiteralParser
 
     RRegexp         = %r{/((?:[^\\/]+|\\.)*)/([imxnNeEsSuU]*)} # Match a regular expression
 
-    RSymbol         = /:\w+|:#{RSString}|:#{RDString}/         # Match a symbol
+    RSymbol         = /:[A-Za-z_]\w*|:#{RSString}|:#{RDString}/         # Match a symbol
+
+    RHashKeySymbol  = /([A-Za-z_]\w*):/                        # Match a symbol used as key in a Hash
 
     RDate           = /(\d{4})-(\d{2})-(\d{2})/                # Match a date
 
@@ -257,13 +259,23 @@ class LiteralParser
         if @scanner.scan(RHashEnd)
           value
         else
-          key = scan_value
-          raise SyntaxError, "Expected =>" unless @scanner.scan(RHashArrow)
+          if @scanner.scan(RHashKeySymbol)
+            key = @scanner[1].to_sym
+            @scanner.scan(RHashVoid)
+          else
+            key = scan_value
+            raise SyntaxError, "Expected =>" unless @scanner.scan(RHashArrow)
+          end
           val = scan_value
           value[key] = val
           while @scanner.scan(RHashSeparator)
-            key = scan_value
-            raise SyntaxError, "Expected =>" unless @scanner.scan(RHashArrow)
+            if @scanner.scan(RHashKeySymbol)
+              key = @scanner[1].to_sym
+              @scanner.scan(RHashVoid)
+            else
+              key = scan_value
+              raise SyntaxError, "Expected =>" unless @scanner.scan(RHashArrow)
+            end
             val = scan_value
             value[key] = val
           end

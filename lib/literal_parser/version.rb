@@ -9,5 +9,5 @@ end
 class LiteralParser
 
   # The version of the LiteralParser library
-  Version = Gem::Version.new("1.0.0")
+  Version = Gem::Version.new("1.0.1")
 end

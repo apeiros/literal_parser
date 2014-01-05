@@ -57,9 +57,9 @@ suite "LiteralParser" do
     assert_equal expected_array, LiteralParser.parse(array_string)
   end
   test "Parse Hash" do
-    array_string    = '{nil => false, true => 123, 12.5 => 2012-05-20, :sym => "str"}'
-    expected_array  = {nil => false, true => 123, 12.5 => Date.civil(2012,5,20), :sym => "str"}
-    assert_equal expected_array, LiteralParser.parse(array_string)
+    hash_string    = '{nil => false, true => 123, 12.5 => 2012-05-20, :sym => "str", sym2: 123}'
+    expected_hash  = {nil => false, true => 123, 12.5 => Date.civil(2012,5,20), :sym => "str", :sym2 => 123}
+    assert_equal expected_hash, LiteralParser.parse(hash_string)
   end
   test "Parse Constants" do
     assert_equal Time, LiteralParser.parse('Time')
